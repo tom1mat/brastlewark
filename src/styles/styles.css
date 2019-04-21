@@ -1,0 +1,29 @@
+#search{
+    width: 300px;
+    height: 43px;
+    font-size: 18px;
+    border-radius: 28px;
+    border: 3px solid black;
+    padding-left: 24px;
+    background: rgba(255,255,255,.8);
+}
+
+.centered{
+    z-index: 999;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    -webkit-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+}
+
+#search:focus{
+    outline: none;
+}
+
+img{
+    object-fit: cover;
+    object-position: top center;
+    width: 250px;
+    height: 250px;
+}
