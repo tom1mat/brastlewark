@@ -9,8 +9,10 @@ import { debounce } from "lodash";
 class MainScreen extends React.PureComponent {
   state = {
     items: [],
+    rowCount: 4,
     searchText: "",
     searchBy: "name",// name or friends
+    isSearchByNameChecked: true,
     isAgeFilterDisabled: true,
     ageFilter: {
       operator: "", //LESS THAN, IS, MORE THAN
@@ -20,6 +22,7 @@ class MainScreen extends React.PureComponent {
 
   debounceEvent(...args) {
     this.debouncedEvent = debounce(...args);
+    console.log(this);
     return e => {
       e.persist();
       return this.debouncedEvent(e);
@@ -45,23 +48,22 @@ class MainScreen extends React.PureComponent {
               id="search"
               type="text"
               placeholder="Search"
-              // onChange={this.debounceEvent(this.handleSearch, 100)}
               onChange={this.handleSearch}
             />
             <RadioButton
+              checked={this.state.isSearchByNameChecked}
               type="radio"
               name="searchBy"
               label="Name"
               value="name"
-              // onChange={this.debounceEvent(this.handleSearchBy, 200)}
               onChange={this.handleSearchBy}
             />
             <RadioButton
+              checked={!this.state.isSearchByNameChecked}
               type="radio"
               name="searchBy"
               label="Friends"
               value="friends"
-              // onChange={this.debounceEvent(this.handleSearchBy, 200)}
               onChange={this.handleSearchBy}
             />
             <div>
@@ -101,47 +103,32 @@ class MainScreen extends React.PureComponent {
               </div>
             </div>
           </div>
-          <CardList items={this.state.items} />
+          <CardList items={this.state.items} rowCount={this.state.rowCount} />
         </div>
       );
     }
   }
 
-  // handleSearch = debounce((event)=>{
-  //   event.persist();
-  //   console.log("HANDLE SEARCH");
-  //   console.log(event.target);
-  //   this.setState({ ...this.state, searchText: event.target.value });
-  //   this.filterItems();
-  // }, 100);
-
-  // handleSearchBy = debounce((event)=>{
-  //   event.persist();
-  //   console.log("HANDLE SEARCH BY");
-  //   console.log(event.target);
-  //   this.setState({...this.state, searchBy: event.target.value})
-  //   this.filterItems();
-  // },100);
-
-  handleSearch = this.debounceEvent((event)=>{
-    console.log("HANDLE SEARCH");
-    console.log(event.target);
+  handleSearch = (event) =>{
     this.setState({ ...this.state, searchText: event.target.value });
-    this.filterItems();
-  }, 100);
+    this.handleSearchDebounced();
+  }
 
-  handleSearchBy = this.debounceEvent((event)=>{
-    console.log("HANDLE SEARCH BY");
-    console.log(event.target);
-    this.setState({...this.state, searchBy: event.target.value})
+  handleSearchBy = (event)=>{
+    this.setState({...this.state, searchBy: event.target.value, isSearchByNameChecked: !this.state.isSearchByNameChecked})
+    this.handleSearchDebounced();
+  };
+
+  handleSearchDebounced = debounce(()=>{
     this.filterItems();
-  },100);
+  }, 500);
 
   handleCBAge = () => {
     this.setState({
       ...this.state,
       isAgeFilterDisabled: !this.state.isAgeFilterDisabled
     });
+    this.handleSearchDebounced();
   };
   handleAgeChange = event => {
     if (event.target.type === "number") {// Change VALUE
@@ -155,6 +142,7 @@ class MainScreen extends React.PureComponent {
         ageFilter: { ...this.state.ageFilter, operator: event.target.value }
       });
     }
+    this.handleSearchDebounced();
   };
 
   filterItems = () => {

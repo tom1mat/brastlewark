@@ -7,7 +7,6 @@
     padding-left: 24px;
     background: rgba(255,255,255,.8);
 }
-
 .centered{
     z-index: 999;
     position: fixed;
@@ -20,10 +19,29 @@
 #search:focus{
     outline: none;
 }
-
+h1{
+    font-size: 1.5rem;
+}
 img{
     object-fit: cover;
     object-position: top center;
-    width: 250px;
-    height: 250px;
+    width: 100%;
+    height: auto;
+    max-height: 197px;
+    /* width: 250px;
+    height: 250px; */
+}
+.row{
+    margin-right: 0px; 
+    margin-left: 0px; 
+}
+.item{
+    -webkit-box-shadow: -1px 3px 21px -15px rgba(0,0,0,0.58);
+    -moz-box-shadow: -1px 3px 21px -15px rgba(0,0,0,0.58);
+    box-shadow: -1px 3px 21px -15px rgba(0,0,0,0.58);
+    margin-bottom: 25px;
+}
+.mlr-auto{
+    margin-left: auto;
+    margin-right: auto;
 }
