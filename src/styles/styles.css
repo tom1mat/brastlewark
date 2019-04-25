@@ -1,3 +1,4 @@
+@import '~antd/dist/antd.css';
 #search{
     width: 400px;
     height: 57px;
@@ -15,21 +16,23 @@
     -webkit-transform: translate(-50%, -50%);
     transform: translate(-50%, -50%);
 }
-
 #search:focus{
     outline: none;
 }
 h1{
-    font-size: 1.5rem;
+    font-size: 1rem;
 }
 img{
     object-fit: cover;
     object-position: top center;
     width: 100%;
     height: auto;
-    max-height: 197px;
-    /* width: 250px;
-    height: 250px; */
+}
+.imgSmall img{
+    max-height: 150px;
+}
+.imgBig img{
+    max-height: 300px;
 }
 .row{
     margin-right: 0px; 
@@ -45,3 +48,34 @@ img{
     margin-left: auto;
     margin-right: auto;
 }
+
+.checkbox{
+    display: inline;
+}
+.title{
+    font-weight: bold;
+    padding: 5px;
+}
+
+
+
+
+
+
+#components-layout-demo-custom-trigger .trigger {
+    font-size: 18px;
+    line-height: 64px;
+    padding: 0 24px;
+    cursor: pointer;
+    transition: color .3s;
+  }
+  
+  #components-layout-demo-custom-trigger .trigger:hover {
+    color: #1890ff;
+  }
+  
+  #components-layout-demo-custom-trigger .logo {
+    height: 32px;
+    background: rgba(255,255,255,.2);
+    margin: 16px;
+  }

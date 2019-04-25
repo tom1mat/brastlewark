@@ -11,15 +11,15 @@ class LoadingScreen extends React.PureComponent{
         Object.values(data)[0].forEach((item) =>{
             if(item.professions){
                 item.professions.forEach((eachProff)=>{
-                    if(!professions[eachProff])
-                        professions[eachProff] = {profession: eachProff, workers: 1};
+                    if(!professions[eachProff.replace(/\s/g, '')])
+                        professions[eachProff.replace(/\s/g, '')] = {profession: eachProff, workersCount: 1};
                     else
-                        professions[eachProff].workers++;
+                        professions[eachProff.replace(/\s/g, '')].workersCount++;
                 });
             }
         });
         this.props.loadProfessions(professions);
-        this.props.setAppState("LOADED");
+        this.props.setAppState("READY");
     }
     render(){
         return(

@@ -2,194 +2,97 @@ import React from "react";
 import { connect } from "react-redux";
 import LoadingScreen from "./components/LoadingScreen";
 import CardList from "./components/CardList";
-import CheckBox from "./components/CheckBox";
-import RadioButton from "./components/RadioButton";
 import { debounce } from "lodash";
+
+import FilterAge from "./components/FilterAge"
+import FilterProfessions from "./components/FilterProfessions"
+
+//Style imports
+import { Layout, Input, Radio } from 'antd';
+const { Header, Content } = Layout;
 
 class MainScreen extends React.PureComponent {
   state = {
-    items: [],
     rowCount: 4,
-    searchText: "",
-    searchBy: "name",// name or friends
     isSearchByNameChecked: true,
-    isAgeFilterDisabled: true,
-    ageFilter: {
-      operator: "", //LESS THAN, IS, MORE THAN
-      value: ""
-    }
+    searchPlaceholder: "Search by name"
   };
 
-  debounceEvent(...args) {
-    this.debouncedEvent = debounce(...args);
-    console.log(this);
-    return e => {
-      e.persist();
-      return this.debouncedEvent(e);
-    };
-  }
-  componentDidMount() {
-    this.setState({ ...this.state, items: this.props.data });
-  }
-  componentWillReceiveProps(props) {
-    this.setState({ ...this.state, items: props.data });
-  }
-  componentWillUnmount(){
-    this.debounceEvent.cancel();
-  }
   render() {
-    console.log(this.state.searchBy);
     if (this.props.appState === "LOADING") return <LoadingScreen />;
     else {
+      const Search = Input.Search;
       return (
-        <div className="row">
-          <div className="col-lg-12 text-center">
-            <input
-              id="search"
-              type="text"
-              placeholder="Search"
-              onChange={this.handleSearch}
-            />
-            <RadioButton
-              checked={this.state.isSearchByNameChecked}
-              type="radio"
-              name="searchBy"
-              label="Name"
-              value="name"
-              onChange={this.handleSearchBy}
-            />
-            <RadioButton
-              checked={!this.state.isSearchByNameChecked}
-              type="radio"
-              name="searchBy"
-              label="Friends"
-              value="friends"
-              onChange={this.handleSearchBy}
-            />
-            <div>
-              <div className="Age">
-                <CheckBox label="Age" onChange={this.handleCBAge} />
-                <RadioButton
-                  disabled={this.state.isAgeFilterDisabled}
-                  type="radio"
-                  name="age"
-                  value="Less than"
-                  label="Less than"
-                  onChange={this.handleAgeChange}
+        <Layout>
+          <Layout>
+            <Header style={{ background: '#fff', padding: 0 }}>
+              <div className="text-center">
+                <Search
+                  placeholder={this.state.searchPlaceholder}
+                  onChange={this.handleSearch}
+                  style={{ width: 200 }}
                 />
-                <RadioButton
-                  disabled={this.state.isAgeFilterDisabled}
-                  type="radio"
-                  name="age"
-                  value="Is"
-                  label="Is"
-                  onChange={this.handleAgeChange}
-                />
-                <RadioButton
-                  disabled={this.state.isAgeFilterDisabled}
-                  type="radio"
-                  name="age"
-                  value="More than"
-                  label="More than"
-                  onChange={this.handleAgeChange}
-                />
-                <input
-                  disabled={this.state.isAgeFilterDisabled}
-                  type="number"
-                  value={this.ageFilterValue}
-                  onChange={this.handleAgeChange}
-                />
-                <button onClick={this.filterItems}>Filter</button>
+                <Radio.Group defaultValue="name" buttonStyle="solid">
+                  <Radio.Button onChange={this.handleSearchBy} value="name">Name</Radio.Button>
+                  <Radio.Button onChange={this.handleSearchBy} value="friends">Friends</Radio.Button>
+                </Radio.Group>
               </div>
-            </div>
-          </div>
-          <CardList items={this.state.items} rowCount={this.state.rowCount} />
-        </div>
+            </Header>
+            <Content style={{
+              margin: '24px 16px', padding: 24, background: '#fff'
+            }}
+            >
+            <FilterAge/>
+              <FilterProfessions/>
+                <CardList items={this.props.filteredItems} rowCount={this.state.rowCount} />
+            </Content>
+          </Layout>
+        </Layout>
       );
     }
   }
 
-  handleSearch = (event) =>{
-    this.setState({ ...this.state, searchText: event.target.value });
-    this.handleSearchDebounced();
+  handleSearch = (event) => {
+    this.runDebounced(this.props.setSearchText, event.target.value);
   }
 
-  handleSearchBy = (event)=>{
-    this.setState({...this.state, searchBy: event.target.value, isSearchByNameChecked: !this.state.isSearchByNameChecked})
-    this.handleSearchDebounced();
+  handleSearchBy = (event) => {
+    this.setState({searchPlaceholder: "Search by "+event.target.value});
+    this.runDebounced(this.props.setSearchBy, event.target.value);
   };
 
-  handleSearchDebounced = debounce(()=>{
-    this.filterItems();
+  runDebounced = debounce((callback, params) => {
+    callback(params);
   }, 500);
+}
 
-  handleCBAge = () => {
-    this.setState({
-      ...this.state,
-      isAgeFilterDisabled: !this.state.isAgeFilterDisabled
-    });
-    this.handleSearchDebounced();
-  };
-  handleAgeChange = event => {
-    if (event.target.type === "number") {// Change VALUE
-      this.setState({
-        ...this.state,
-        ageFilter: { ...this.state.ageFilter, value: event.target.value }
+const mapDispatchToProps = dispatch => {
+  return {
+    setSearchText: (data) => {
+      dispatch({
+        type: "SET_SEARCH_TEXT",
+        payload: data
       });
-    } else {//Change OPERATOR
-      this.setState({
-        ...this.state,
-        ageFilter: { ...this.state.ageFilter, operator: event.target.value }
-      });
+    },
+    setSearchBy: (data) => {
+      dispatch({
+        type: "SET_SEARCH_BY",
+        payload: data
+      })
     }
-    this.handleSearchDebounced();
-  };
-
-  filterItems = () => {
-    const { searchText, ageFilter, searchBy } = this.state;
-    let items = this.props.data;
-    if (searchText.length > 0) {
-      if(searchBy == "name"){
-        items = items.filter(item =>
-          item.name.toLowerCase().includes(searchText.toLowerCase())
-        );
-      }else if(searchBy == "friends"){
-        items = items.filter(item =>{ 
-            let hasFriend = false;
-            for(let i = 0; i < item.friends.length; i ++){
-              if(item.friends[i].toLowerCase().includes(searchText.toLowerCase())){
-                hasFriend = true;
-                break;
-              }
-            }
-            return hasFriend;
-          }
-        );
-      }
-      
-    }
-    if (!this.state.isAgeFilterDisabled) {
-      items = items.filter(item => {
-        if (ageFilter.operator === "Less than") {
-          return item.age < ageFilter.value;
-        }
-        if (ageFilter.operator === "Is") {
-          return item.age == ageFilter.value;
-        }
-        if (ageFilter.operator === "More than") {
-          return item.age > ageFilter.value;
-        }
-      });
-    }
-    this.setState({...this.state, items });
-  };
+  }
 }
 
 const mapStateToProps = state => {
   return {
+    isReady: state.isReady,
     appState: state.appState,
-    data: state.data
+    filteredItems: state.filteredItems,
+    isFilterAgeDisabled: state.isFilterAgeDisabled,
+    isFilterProfessionsDisabled: state.isFilterProfessionsDisabled,
+    filterProfessions: state.filterProfessions,
+    filterAge: state.filterAge
   };
 };
 
-export default connect(mapStateToProps)(MainScreen);
+export default connect(mapStateToProps, mapDispatchToProps)(MainScreen);
