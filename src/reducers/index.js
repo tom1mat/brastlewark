@@ -40,10 +40,11 @@ const reducer = (state = initialState, action) => {
       }
     }
     if (!state.isFilterAgeDisabled) {
+      console.log(state);
       filteredItems = filteredItems.filter(item => {
-        if (state.filterAge.operator === "Less than")
+        if (state.filterAge.operation === "Less than")
           return item.age < state.filterAge.value;
-        else if(state.filterAge.operator === "Is") 
+        else if(state.filterAge.operation === "Is") 
           return item.age == state.filterAge.value;
         else// More than
           return item.age > state.filterAge.value;

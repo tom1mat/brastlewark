@@ -25,6 +25,7 @@ class LoadingScreen extends React.PureComponent{
         return(
             <div>
                 <h1>LOADING!</h1>
+                <img src="loading.gif" id="loadingGif" alt="Loading" width="240" height="240"></img>
             </div>
         )
     }

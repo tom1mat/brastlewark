@@ -33,11 +33,11 @@ class FilterAge extends React.PureComponent {
         };
         return (
             <div>
-                <Switch onChange={this.handleToggleAge} /> Age
-                    <Radio.Group defaultValue="Less than" onChange={this.handleAgeOperation} disabled={this.state.isDisabled}>
-                    <Radio style={radioStyle} value="Less than">Less than</Radio>
-                    <Radio style={radioStyle} value="Is">Is</Radio>
+                <div className="center-block"><Switch id="toggleAge" onChange={this.handleToggleAge}/> Age</div>
+                <Radio.Group defaultValue="More than" onChange={this.handleAgeOperation} disabled={this.state.isDisabled}>
                     <Radio style={radioStyle} value="More than">More than</Radio>
+                    <Radio style={radioStyle} value="Is">Is</Radio>
+                    <Radio style={radioStyle} value="Less than">Less than</Radio>
                 </Radio.Group>
                 <Input
                     disabled={this.state.isDisabled}

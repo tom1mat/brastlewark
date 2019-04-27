@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from "react-redux";
 import { debounce } from "lodash"
-import { Checkbox, Switch } from 'antd';
+import { Checkbox, Switch, Col } from 'antd';
 
 class FilterProfessions extends React.PureComponent {
     state = {
@@ -31,11 +31,17 @@ class FilterProfessions extends React.PureComponent {
     render() {
         return (
             <div className="filterProfessions">
-                <Switch onChange={this.handleToggleProfessions} /> Professions
-                {Object.values(this.props.professions).map((eachProff) => {
-                    return <Checkbox disabled={this.state.isDisabled} onChange={this.handleProfessionChange} value={eachProff.profession}>
-                        {eachProff.profession + "(" + eachProff.workersCount + ")"}
-                    </Checkbox>
+                <div className="center-block"><Switch onChange={this.handleToggleProfessions} /> Professions</div>
+                {Object.values(this.props.professions).map((eachProff, index) => {
+                    return <Col lg={6}
+                                md={8}
+                                sm={12}
+                                xs={24}
+                                key={index}>
+                                    <Checkbox disabled={this.state.isDisabled} onChange={this.handleProfessionChange} value={eachProff.profession}>
+                                        {eachProff.profession + "(" + eachProff.workersCount + ")"}
+                                    </Checkbox>
+                                </Col>
                 })}
             </div>
         );
