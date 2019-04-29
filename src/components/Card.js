@@ -1,5 +1,6 @@
 import React from "react";
 import { Avatar } from "antd";
+import { Link } from 'react-router-dom';
 class Card extends React.PureComponent {
   render() {
     const data = this.props.data;
@@ -12,9 +13,11 @@ class Card extends React.PureComponent {
     else
       fontSize = 17
 
+    const link = data.name.replace(" ","-");
+    
     return (
       <div className="item">
-        <h1>{data.name}</h1>
+        <Link to={link}><h1>{data.name}</h1></Link>
         <Avatar src={data.thumbnail} size={150} className="center-auto"/>
         <h2 className="age">Age: {data.age}</h2>
         <h2>Weight {data.weight}</h2>
@@ -25,7 +28,7 @@ class Card extends React.PureComponent {
             <div className="title">Friends</div>
             <ul>
               {data.friends.map((friend, index) => {
-                return <li key={index}>{friend}</li>;
+                return <li key={index}><Link to={friend.replace(" ","-")}>{friend}</Link></li>;
               })}
             </ul>
           </div>

@@ -61,6 +61,7 @@ img{
 }
 .title{
     font-weight: bold;
+    text-align: center;
     padding: 5px;
 }
 .center-block{
@@ -80,6 +81,7 @@ h2{
 .filters{
     padding: 17px;
     margin-bottom: 50px;
+    background-color: #f0f2f5;
 }
 .center-auto{
     display: block;
@@ -118,7 +120,33 @@ h2{
     margin-top: 15px;
 }
 
+.imgProfile{
+    object-fit: cover;
+    object-position: top center;
+    text-align: center;
+    display: block;
+    margin: 0 auto 15px auto;
+}
+.profileName{
+    padding-top: 17px;
+    text-align: center;
+}
+ul{
+    padding-left: 0;
+}
+li{
+    display: block;
+    text-align: center;
+}
+.sectionProfile{
+    font-size: 17px;
+}
+
 @media(min-width: 820px){
+    .imgProfile{
+        max-width: 600px;
+        max-height: 400px;
+    }
     .ant-checkbox-wrapper{
         font-size: 16px;
     }
@@ -126,6 +154,10 @@ h2{
 @media(max-width: 820px){
     .ant-checkbox-wrapper{
         font-size: 12px;
+    }
+    .imgProfile{
+        width: 80%;
+        max-height: 550px;
     }
 }
 @media(min-width: 576px){
@@ -142,6 +174,10 @@ h2{
 }
 
 @media(max-width: 576px){
+    .imgProfile{
+        width: 90%;
+        max-height: 300px;
+    }
     .ant-pagination-item{
         min-width: 20px;
         height: 20px;

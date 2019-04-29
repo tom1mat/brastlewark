@@ -1,14 +1,14 @@
 import React from "react";
 import { connect } from "react-redux";
-import LoadingScreen from "./components/LoadingScreen";
-import CardList from "./components/CardList";
+import LoadingScreen from "./LoadingScreen";
+import CardList from "./CardList";
 import { debounce } from "lodash";
 
-import FilterAge from "./components/FilterAge"
-import FilterProfessions from "./components/FilterProfessions"
+import FilterAge from "./FilterAge"
+import FilterProfessions from "./FilterProfessions"
 
 //Style imports
-import { Layout, Input, Radio, Pagination, Col, Row, Button } from 'antd';
+import { Layout, Input, Radio, Pagination, Col, Row, Button, message } from 'antd';
 const { Header, Content } = Layout;
 
 class MainScreen extends React.PureComponent {
@@ -20,7 +20,8 @@ class MainScreen extends React.PureComponent {
     showFilters: false,
     centeredClass: '',
     pageSelected: 1,
-    isGoTopDisabled: true
+    isGoTopDisabled: true,
+    wasMessageDisplayed: false
   };
 
   componentWillReceiveProps(props) {
@@ -29,26 +30,16 @@ class MainScreen extends React.PureComponent {
     }
   }
   componentDidMount() {
-    document.addEventListener("keydown", event => {
-      if (event.ctrlKey && event.keyCode == 32) {
-        if (this.state.centeredClass === "centered") {
-          this.setState({ centeredClass: "" });
-        } else {
-          this.setState({ centeredClass: "centered" });
-          this.state.searchRef.focus();
-        }
-      }
-
-      if (event.keyCode === 27) {
-        this.setState({ centeredClass: "" });
-      }
-    });
+    if(this.props.filteredItems){
+      this.setState({ paginatedItems: this.paginate(this.props.filteredItems, 100, 1) })
+    }
+    window.addEventListener("keydown", this.handleShortCut)
     window.addEventListener('scroll', this.handleScroll);
   }
 
   componentWillUnmount() {
     window.removeEventListener('scroll', this.handleScroll);
-    window.removeEventListener('keydown');
+    window.removeEventListener('keydown', this.handleShortCut);
   }
   render() {
 
@@ -107,11 +98,34 @@ class MainScreen extends React.PureComponent {
     }
   }
 
+  handleShortCut = (event)=>{
+    if (event.ctrlKey && event.keyCode === 32) {
+      if (this.state.centeredClass === "centered") {
+        this.setState({ centeredClass: "" });
+      } else {
+        this.setState({ centeredClass: "centered" });
+        this.state.searchRef.focus();
+      }
+    }
+
+    if (event.keyCode === 27) {
+      this.setState({ centeredClass: "" });
+    }
+  }
+
   handleScroll = () => {
-    //Hide-show going top button
     const rect = this.state.searchRef.input.input.getBoundingClientRect();
     const elemTop = rect.top;
     const elemBottom = rect.bottom;
+
+    if(!((typeof window.orientation !== "undefined") || (navigator.userAgent.indexOf('IEMobile') !== -1))){
+      //IF USERAGET IS NOT MOBILE => Show hint for shortcut.
+      if(!this.state.wasMessageDisplayed){
+        this.setState({wasMessageDisplayed: true});
+        message.info('You can press CTRL+SPACE for a faster search!');
+      }
+    }
+    
 
     if ((elemTop >= 0) && (elemBottom <= window.innerHeight)) {
       this.setState({ isGoTopDisabled: true });
